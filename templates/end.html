@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="/static/styles.css">
+    <title>Fin de Partie</title>
+</head>
+<body>
+    <h1>{{.Message}}</h1>
+    {{if .Success}}
+        <p>Vous avez gagné la partie !</p>
+    {{else}}
+        <p>Dommage, vous avez perdu la partie.</p>
+    {{end}}
+    <a href="/">Revenir à l'accueil</a>
+    <a href="/start">Rejouer</a>
+</body>
+</html>
