@@ -1,20 +1,31 @@
 <!DOCTYPE html>
 <html lang="fr">
-    <head>
-        <meta charset="UTF-8">
-        <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <link rel="stylesheet" href="/static/style/index.css">
-        <title>Page d'accueil</title>
-    </head>
-    <body> 
-        <h1 class="Titre"> Bienvenue!</h1>
-        <h2 class="Pseudoentrer"> Veuillez entrer un Pseudo</h2>
-        <div>
-        <form action="/" method="post">   
-        <label for ="name">Pseudo:</label>
-        <input type = "text" id="name" name="name" required>
-        </form> 
-        </div>
-        <button type="submit">Entrer</button>
-    </body>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="/static/style/index.css">
+    <title>Page d'accueil</title>
+</head>
+<body>
+    <header>
+        <h1 class="Titre">Bienvenue !</h1>
+    </header>
+    
+    <main>
+        <section>
+            <h2 class="Pseudoentrer">Veuillez entrer un pseudo</h2>
+            <form action="/" method="post">
+                <label for="name">Pseudo :</label>
+                <input type="text" id="name" name="name" required aria-required="true" placeholder="Entrez votre pseudo">
+                
+                <!-- Placer le bouton dans le formulaire pour qu'il fonctionne correctement -->
+                <button type="submit">Entrer</button>
+            </form>
+        </section>
+    </main>
+    
+    <footer>
+        <p>&copy; 2024 VotreSite. Tous droits réservés.</p>
+    </footer>
+</body>
 </html>

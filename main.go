@@ -1,7 +1,7 @@
 package main
 
 import (
-	"HANGMANWEB__/game" // Importer le package contenant le jeu Hangman (votre logique CLI)
+	"Hangmanweb__/game" // Importer le package contenant le jeu Hangman (votre logique CLI)
 	"fmt"
 	"html/template"
 	"io/ioutil"
