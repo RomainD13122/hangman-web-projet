@@ -2,7 +2,7 @@ package main
 
 import (
 	"fmt"
-	"hangman-web/game"
+	"hangmanweb__/game"
 	"html/template"
 	"io/ioutil"
 	"log"
