@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"log"
 	"math/rand"
+	"net/http"
 	"os"
 	"strings"
 	"time"
@@ -26,6 +27,35 @@ func main() {
 		}
 
 		clearScreen() // Effacer l'écran pour une nouvelle partie
+	}
+}
+func homeHandler(w http.ResponseWriter, r *http.Request) {
+	err := game.RenderTemplate(w, "index.html", nil)
+	if err != nil {
+		log.Println("Erreur dans homeHandler:", err)
+	}
+}
+
+func startGameHandler(w http.ResponseWriter, r *http.Request) {
+	if r.Method == http.MethodPost {
+		// Logique pour démarrer le jeu, puis rediriger vers /game
+		http.Redirect(w, r, "/game", http.StatusSeeOther)
+	}
+}
+
+func gameHandler(w http.ResponseWriter, r *http.Request) {
+	// Logique de rendu du jeu
+	err := game.RenderTemplate(w, "game.html", nil)
+	if err != nil {
+		log.Println("Erreur dans gameHandler:", err)
+	}
+}
+
+func endGameHandler(w http.ResponseWriter, r *http.Request) {
+	// Logique de fin de jeu et affichage de la page de fin
+	err := game.RenderTemplate(w, "end.html", nil)
+	if err != nil {
+		log.Println("Erreur dans endGameHandler:", err)
 	}
 }
 
