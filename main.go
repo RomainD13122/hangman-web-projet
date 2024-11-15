@@ -2,7 +2,7 @@ package main
 
 import (
 	"fmt"
-	"hangmanweb__/game"
+	"hangman/game"
 	"html/template"
 	"io/ioutil"
 	"log"
@@ -82,6 +82,77 @@ func gameHandler(w http.ResponseWriter, r *http.Request) {
 	}
 	tmpl := template.Must(template.ParseFiles("templates/game.html"))
 	tmpl.Execute(w, gameSession)
+}
+func MakeGuess(word, hiddenWord, guess string, attempts int, triedLetters []string) (string, int, string, []string, string) {
+	message := ""
+	hangmanImage := "/static/images/hangman" + string(9-attempts) + ".png" // Image correspondante au nombre d'essais restants
+	updatedHiddenWord := hiddenWord
+
+	// Vérifier si le joueur a déjà tenté cette lettre
+	if contains(triedLetters, guess) {
+		message = "Vous avez déjà essayé cette lettre."
+		return updatedHiddenWord, attempts, message, triedLetters, hangmanImage
+	}
+
+	// Ajouter la lettre à la liste des lettres essayées
+	triedLetters = append(triedLetters, guess)
+
+	// Si l'entrée est un mot entier
+	if len(guess) > 1 {
+		if guess == word {
+			updatedHiddenWord = word
+			message = "Félicitations, vous avez deviné le mot !"
+			attempts = 0 // Le joueur a deviné le mot, donc plus de tentatives restantes
+		} else {
+			message = "Ce n'est pas le bon mot. Vous perdez 3 vies."
+			attempts -= 3
+		}
+	} else {
+		// Si l'entrée est une lettre
+		letter := rune(guess[0])
+		if containsRune(word, letter) {
+			updatedHiddenWord = revealAllLetters(word, updatedHiddenWord, letter)
+			message = "Bien joué !"
+		} else {
+			message = "Cette lettre n'est pas dans le mot."
+			attempts--
+		}
+	}
+
+	return updatedHiddenWord, attempts, message, triedLetters, hangmanImage
+}
+
+// Fonction utilitaire pour vérifier si une lettre ou un mot est dans la liste des lettres déjà essayées
+func contains(slice []string, item string) bool {
+	for _, a := range slice {
+		if a == item {
+			return true
+		}
+	}
+	return false
+}
+
+// Fonction utilitaire pour vérifier si une rune (lettre) est dans un mot
+func containsRune(word string, letter rune) bool {
+	for _, l := range word {
+		if l == letter {
+			return true
+		}
+	}
+	return false
+}
+
+// Fonction pour révéler les lettres dans le mot
+func revealAllLetters(word, hiddenWord string, letter rune) string {
+	updatedWord := ""
+	for i := 0; i < len(word); i++ {
+		if rune(word[i]) == letter {
+			updatedWord += string(word[i])
+		} else {
+			updatedWord += string(hiddenWord[i]) // Garder les caractères déjà révélés
+		}
+	}
+	return updatedWord
 }
 
 func guessHandler(w http.ResponseWriter, r *http.Request) {
