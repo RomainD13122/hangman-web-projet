@@ -2,7 +2,7 @@ package main
 
 import (
 	"fmt"
-	"hangman/game"
+	"hangman/game" // Assurez-vous que le nom du module est correct
 	"html/template"
 	"io/ioutil"
 	"log"
@@ -48,7 +48,11 @@ func homeHandler(w http.ResponseWriter, r *http.Request) {
 		http.Redirect(w, r, "/game", http.StatusSeeOther)
 		return
 	}
-	tmpl := template.Must(template.ParseFiles("templates/index.html"))
+	tmpl, err := template.ParseFiles("templates/index.html")
+	if err != nil {
+		http.Error(w, "Erreur de chargement de la page d'accueil", http.StatusInternalServerError)
+		return
+	}
 	tmpl.Execute(w, nil)
 }
 
@@ -81,7 +85,11 @@ func gameHandler(w http.ResponseWriter, r *http.Request) {
 		http.Redirect(w, r, "/", http.StatusSeeOther)
 		return
 	}
-	tmpl := template.Must(template.ParseFiles("templates/game.html"))
+	tmpl, err := template.ParseFiles("templates/game.html")
+	if err != nil {
+		http.Error(w, "Erreur de chargement de la page de jeu", http.StatusInternalServerError)
+		return
+	}
 	tmpl.Execute(w, gameSession)
 }
 
@@ -154,7 +162,6 @@ func handleRegles(w http.ResponseWriter, r *http.Request) {
 	tmpl.Execute(w, gameSession)
 }
 
-// Gère la page de fin de partie
 func endGameHandler(w http.ResponseWriter, r *http.Request) {
 	if gameSession == nil || gameSession.Attempts > 0 {
 		http.Redirect(w, r, "/game", http.StatusSeeOther)
@@ -170,7 +177,11 @@ func endGameHandler(w http.ResponseWriter, r *http.Request) {
 	rand.Seed(time.Now().Unix())
 	message := messages[rand.Intn(len(messages))]
 
-	tmpl := template.Must(template.ParseFiles("templates/end.html"))
+	tmpl, err := template.ParseFiles("templates/end.html")
+	if err != nil {
+		http.Error(w, "Erreur de chargement de la page de fin", http.StatusInternalServerError)
+		return
+	}
 	tmpl.Execute(w, struct {
 		Message string
 		Success bool
@@ -179,7 +190,6 @@ func endGameHandler(w http.ResponseWriter, r *http.Request) {
 	gameSession = nil // Réinitialise la session de jeu
 }
 
-// Sauvegarde le score dans un fichier texte
 func saveScore(pseudo string, won bool) {
 	result := "perdu"
 	if won {
@@ -198,7 +208,6 @@ func saveScore(pseudo string, won bool) {
 	}
 }
 
-// Affiche la page de scores
 func scoresHandler(w http.ResponseWriter, r *http.Request) {
 	data, err := ioutil.ReadFile(scoreFilePath)
 	if err != nil {
@@ -206,6 +215,10 @@ func scoresHandler(w http.ResponseWriter, r *http.Request) {
 		data = []byte("Aucun score disponible.")
 	}
 	scores := strings.Split(string(data), "\n")
-	tmpl := template.Must(template.ParseFiles("templates/scores.html"))
+	tmpl, err := template.ParseFiles("templates/scores.html")
+	if err != nil {
+		http.Error(w, "Erreur de chargement de la page des scores", http.StatusInternalServerError)
+		return
+	}
 	tmpl.Execute(w, scores)
 }
