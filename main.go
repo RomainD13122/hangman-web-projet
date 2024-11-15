@@ -2,7 +2,7 @@ package main
 
 import (
 	"fmt"
-	"hangman-web/game" // Assurez-vous que le nom du module est correct
+	"hangman/game" // Assurez-vous que le nom du module est correct
 	"html/template"
 	"io/ioutil"
 	"log"

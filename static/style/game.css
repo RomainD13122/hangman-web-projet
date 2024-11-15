@@ -1,0 +1,100 @@
+/* Body with background image */
+body {
+    font-family: 'Arial', sans-serif;
+    background: url('/static/images/cool.jpg') no-repeat center center fixed; /* Image de fond */
+    background-size: cover; /* L'image couvre toute la fenêtre */
+    color: #ffffff; /* Texte blanc pour un bon contraste */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    padding: 20px;
+}
+
+/* Main game container */
+#game-container {
+    background: rgba(0, 0, 0, 0.6); /* Fond semi-transparent pour contraster avec l'image */
+    border-radius: 12px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3); /* Légère ombre pour mieux démarquer le contenu */
+    padding: 30px;
+    max-width: 700px;
+    width: 90%;
+    text-align: center;
+}
+
+/* Title style */
+h1 {
+    font-size: 2.5em;
+    color: #f1c40f; /* Couleur jaune doré pour attirer l'attention */
+    margin-bottom: 20px;
+    text-transform: uppercase;
+}
+
+/* Paragraphs and instructions */
+p {
+    margin-bottom: 15px;
+    font-size: 1.2em;
+    color: #ffffff;
+}
+
+/* Buttons and input fields */
+button, input[type="text"] {
+    padding: 10px 15px;
+    font-size: 1em;
+    border: none;
+    border-radius: 5px;
+    margin-top: 10px;
+}
+
+button {
+    background-color: #27ae60; /* Vert vif */
+    color: white;
+    cursor: pointer;
+    transition: background 0.3s ease;
+}
+
+button:hover {
+    background-color: #219150; /* Légère variation au survol */
+}
+
+input[type="text"] {
+    width: 80%;
+    background-color: #ffffff;
+    color: #333;
+    border: 1px solid #ddd;
+}
+
+input[type="text"]:focus {
+    outline: none;
+    border-color: #4a90e2;
+    box-shadow: 0 0 5px rgba(74, 144, 226, 0.5);
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+    h1 {
+        font-size: 2em;
+    }
+
+    #game-container {
+        padding: 20px;
+    }
+
+    p {
+        font-size: 1em;
+    }
+}
+
+@media (max-width: 480px) {
+    h1 {
+        font-size: 1.8em;
+    }
+
+    p {
+        font-size: 0.9em;
+    }
+
+    input[type="text"] {
+        width: 100%;
+    }
+}

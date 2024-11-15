@@ -1,3 +1,3 @@
-module HANGMAN-WEB
+module hangman
 
 go 1.23.0

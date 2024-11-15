@@ -1,4 +1,4 @@
-package main
+package game
 
 import (
 	"bufio"
@@ -59,13 +59,115 @@ func endGameHandler(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
+func NewGame(difficulty string) (string, string, int) {
+	rand.Seed(time.Now().UnixNano()) // Initialise la graine du générateur aléatoire avec l'heure actuelle
+	var word string
+	var hiddenWord string
+	var attempts int
+
+	// Sélection du mot en fonction de la difficulté
+	switch difficulty {
+	case "easy":
+		word = "chat"      // Mot facile
+		hiddenWord = "___" // Mot masqué avec des underscores
+		attempts = 10      // Nombre d'essais pour un mot facile
+	case "medium":
+		word = "éléphant"       // Mot de difficulté moyenne
+		hiddenWord = "________" // Mot masqué pour un mot de taille moyenne
+		attempts = 7            // Nombre d'essais pour un mot de difficulté moyenne
+	case "hard":
+		word = "hippopotame"      // Mot difficile
+		hiddenWord = "__________" // Mot masqué pour un mot plus long
+		attempts = 5              // Nombre d'essais pour un mot difficile
+	default:
+		word = "exemple"       // Mot par défaut si aucune difficulté n'est spécifiée
+		hiddenWord = "_______" // Mot masqué par défaut
+		attempts = 9           // Nombre d'essais par défaut
+	}
+
+	// Retourner le mot, le mot masqué et le nombre d'essais
+	return word, hiddenWord, attempts
+}
+
+func MakeGuess(word, hiddenWord, guess string, attempts int, triedLetters []string) (string, int, string, []string, string) {
+	message := ""
+	hangmanImage := "/static/images/hangman" + string(9-attempts) + ".png" // Image correspondante au nombre d'essais restants
+	updatedHiddenWord := hiddenWord
+
+	// Vérifier si le joueur a déjà tenté cette lettre
+	if contains(triedLetters, guess) {
+		message = "Vous avez déjà essayé cette lettre."
+		return updatedHiddenWord, attempts, message, triedLetters, hangmanImage
+	}
+
+	// Ajouter la lettre à la liste des lettres essayées
+	triedLetters = append(triedLetters, guess)
+
+	// Si l'entrée est un mot entier
+	if len(guess) > 1 {
+		if guess == word {
+			updatedHiddenWord = word
+			message = "Félicitations, vous avez deviné le mot !"
+			attempts = 0 // Le joueur a deviné le mot, donc plus de tentatives restantes
+		} else {
+			message = "Ce n'est pas le bon mot. Vous perdez 3 vies."
+			attempts -= 3
+		}
+	} else {
+		// Si l'entrée est une lettre
+		letter := rune(guess[0])
+		if containsRune(word, letter) {
+			updatedHiddenWord = revealAllLetters(word, updatedHiddenWord, letter)
+			message = "Bien joué !"
+		} else {
+			message = "Cette lettre n'est pas dans le mot."
+			attempts--
+		}
+	}
+
+	return updatedHiddenWord, attempts, message, triedLetters, hangmanImage
+}
+
+// Fonction utilitaire pour vérifier si un élément existe dans une tranche de chaînes
+func contains(slice []string, item string) bool {
+	for _, a := range slice {
+		if a == item {
+			return true
+		}
+	}
+	return false
+}
+
+// Fonction utilitaire pour vérifier si une rune (lettre) est dans un mot
+func containsRune(word string, letter rune) bool {
+	for _, l := range word {
+		if l == letter {
+			return true
+		}
+	}
+	return false
+}
+
+// Fonction pour révéler les lettres dans le mot
+func revealAllLetters(word, hiddenWord string, letter rune) string {
+	updatedWord := ""
+	for i := 0; i < len(word); i++ {
+		if rune(word[i]) == letter {
+			updatedWord += string(word[i])
+		} else {
+			updatedWord += string(hiddenWord[i]) // Garder les caractères déjà révélés
+		}
+	}
+	return updatedWord
+}
+
 // Fonction qui contient le jeu du pendu
 func playGame() {
 	// Demander à l'utilisateur de choisir une difficulté
 	var choix int
 	fmt.Println("Entrez une difficulté :")
-	fmt.Println("(1) Facile - hangman.txt")
-	fmt.Println("(2) Difficile - hangman1.txt")
+	fmt.Println("(1) Facile")
+	fmt.Println("(2) Difficile")
 	fmt.Scan(&choix)
 
 	var fileName string
@@ -169,7 +271,6 @@ func playGame() {
 			fmt.Printf("Félicitations, vous avez deviné le mot : %s\n", motAleatoire)
 			break
 		}
-
 		// Vérifier si les vies sont épuisées
 		if vie <= 0 {
 			fmt.Printf("Vous avez perdu. Le mot était : %s\n", motAleatoire)
@@ -179,82 +280,101 @@ func playGame() {
 
 	clearScreen() // Effacement de l'écran après la fin de la partie
 }
+func containsInt(slice []int, item int) bool {
+	for _, a := range slice {
+		if a == item {
+			return true
+		}
+	}
+	return false
+}
+func replaceWithMultipleLetters(word string, indices []int) string {
+	affichage := ""
+	for i := 0; i < len(word); i++ {
+		if containsInt(indices, i) {
+			affichage += string(word[i]) // Garder la lettre si l'indice est dans le tableau
+		} else {
+			affichage += "_" // Remplacer par un underscore si l'indice n'est pas dans le tableau
+		}
+	}
+	return affichage
+}
 
 // Fonction pour dessiner le pendu en fonction du nombre de vies restantes
 func drawHangman(vie int) string {
 	steps := []string{
 		`
-    
-      | 
-      | 
-      | 
-      | 
-      | 
-  ___/ `,
+			
+			  | 
+			  | 
+			  | 
+			  | 
+			  | 
+		  ___/ `,
 		`
-  ___  
-      |     
-      | 
-      | 
-      | 
-      | 
-  ___/ `,
+		  ___  
+			  |     
+			  | 
+			  | 
+			  | 
+			  | 
+		  ___/ `,
 		`
-  ___  
-  |   | 
-      | 
-      | 
-      | 
-      | 
-  ___/ `,
+		  ___  
+		  |   | 
+			  | 
+			  | 
+			  | 
+			  | 
+		  ___/ `,
 		`
-  ___  
-  |   | 
-  o   | 
-      | 
-      | 
-      | 
-  ___/ `,
+		  ___  
+		  |   | 
+		  o   | 
+			  | 
+			  | 
+			  | 
+		  ___/ `,
 		`
-  ___  
-  |   | 
-  o   | 
-  |   | 
-      | 
-      | 
-  ___/ `,
+		  ___  
+		  |   | 
+		  o   | 
+		  |   | 
+			  | 
+			  | 
+		  ___/ `,
 		`
-  ___  
-  |   | 
-  o   | 
- /|   | 
-      | 
-      | 
-  ___/ `,
+		  ___  
+		  |   | 
+		  o   | 
+		 /|   | 
+			  | 
+			  | 
+		  ___/ `,
 		`
-  ___  
-  |   | 
-  o   | 
- /|\  | 
-      | 
-      | 
-  ___/ `,
+		  ___  
+		  |   | 
+		  o   | 
+		 /|\  | 
+			  | 
+			  | 
+		  ___/ `,
 		`
-  ___  
-  |   | 
-  o   | 
- /|\  | 
- /    | 
-      | 
-  ___/ `,
+		  ___  
+		  |   | 
+		  o   | 
+		 /|\  | 
+		 /    | 
+			  | 
+		  ___/ `,
 		`
-  ___  
-  |   | 
-  o   | 
- /|\  | 
- / \  | 
-      | 
-  ___/ `,
+		  ___  
+		  |   | 
+		  o   | 
+		 /|\  | 
+		 / \  | 
+			  | 
+		  ___/ `,
 	}
 
 	index := 9 - vie // Calculer l'étape du dessin à partir des vies restantes
@@ -278,58 +398,10 @@ func replaceWithUnderscores(mot string, lettreVisible rune) string {
 	return affichage
 }
 
-// Fonction pour afficher deux lettres aléatoires
-func replaceWithMultipleLetters(mot string, indices []int) string {
-	affichage := ""
-	for i := 0; i < len(mot); i++ {
-		if contains(indices, i) {
-			affichage += string(mot[i])
-		} else {
-			affichage += "_"
-		}
-	}
-	return affichage
-}
-
-// Fonction pour vérifier si un indice est dans une liste
-func contains(indices []int, val int) bool {
-	for _, index := range indices {
-		if index == val {
-			return true
-		}
-	}
-	return false
-}
-
-// Fonction pour effacer l'écran selon l'OS
 func clearScreen() {
 	fmt.Print("\033[H\033[2J")
 }
 
-// Fonction pour vérifier si une rune est dans un mot
-func containsRune(mot string, lettre rune) bool {
-	for _, l := range mot {
-		if l == lettre {
-			return true
-		}
-	}
-	return false
-}
-
-// Fonction pour dévoiler toutes les lettres correspondantes dans l'affichage
-func revealAllLetters(mot string, affichage string, lettre rune) string {
-	newAffichage := ""
-	for i := 0; i < len(mot); i++ {
-		if rune(mot[i]) == lettre {
-			newAffichage += string(mot[i])
-		} else {
-			newAffichage += string(affichage[i]) // garder le même caractère
-		}
-	}
-	return newAffichage
-}
-
-// Fonction pour vérifier s'il reste des underscores
 func containsUnderscore(affichage string) bool {
 	for _, l := range affichage {
 		if l == '_' {
