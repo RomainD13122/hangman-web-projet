@@ -10,17 +10,19 @@ body {
     background-color: #f0f4f8; /* Couleur de fond douce */
     color: #333;
     line-height: 1.6;
-    display: flex;
-    justify-content: center;
-    align-items: center;
     min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between; /* Permet de bien répartir les blocs */
+    align-items: center;
     padding: 20px;
 }
 
 /* Header */
 header {
+    width: 100%;
     text-align: center;
-    margin-bottom: 20px;
+    margin-top: 20px;
 }
 
 h1.Titre {
@@ -32,6 +34,12 @@ h1.Titre {
 
 /* Main Section */
 main {
+    flex-grow: 1; /* Main occupe tout l'espace vertical disponible */
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
     background: #ffffff;
     border-radius: 10px;
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
@@ -41,7 +49,8 @@ main {
 }
 
 section {
-    text-align: left;
+    width: 100%;
+    text-align: center;
 }
 
 section p {
@@ -54,12 +63,24 @@ section p strong {
     color: #4a90e2;
 }
 
-/* Footer (Optional) */
-footer {
+/* Bouton deviner */
+form {
+    margin-top: auto; /* Assure que le bouton est toujours en bas */
+}
+
+button[type="submit"] {
+    background-color: #28a745;
+    color: white;
+    font-size: 1em;
+    padding: 10px 20px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
     margin-top: 20px;
-    font-size: 0.9em;
-    color: #888;
-    text-align: center;
+}
+
+button[type="submit"]:hover {
+    background-color: #218838;
 }
 
 /* Responsive Design */
@@ -86,3 +107,4 @@ footer {
         font-size: 0.9em;
     }
 }
+

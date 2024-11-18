@@ -2,42 +2,62 @@
 body {
     font-family: 'Arial', sans-serif;
     background: url('/static/images/cool.jpg') no-repeat center center fixed; /* Image de fond */
-    background-size: cover; /* L'image couvre toute la fenêtre */
-    color: #ffffff; /* Texte blanc pour un bon contraste */
+    background-size: cover;
+    color: #ffffff;
     display: flex;
-    justify-content: center;
-    align-items: center;
+    flex-direction: column;
     min-height: 100vh;
-    padding: 20px;
+    margin: 0;
 }
 
-/* Main game container */
+/* Conteneur principal pour aligner le contenu */
 #game-container {
-    background: rgba(0, 0, 0, 0.6); /* Fond semi-transparent pour contraster avec l'image */
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between; /* Espace entre les sections */
+    align-items: center;
+    flex-grow: 1;
+    margin: 0 20px;
+    padding: 20px;
+    background: rgba(0, 0, 0, 0.6);
     border-radius: 12px;
-    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3); /* Légère ombre pour mieux démarquer le contenu */
-    padding: 30px;
-    max-width: 700px;
-    width: 90%;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
     text-align: center;
 }
 
-/* Title style */
+/* Titre en haut de la page */
 h1 {
     font-size: 2.5em;
-    color: #f1c40f; /* Couleur jaune doré pour attirer l'attention */
-    margin-bottom: 20px;
+    color: #f1c40f;
     text-transform: uppercase;
+    margin-top: 20px;
 }
 
-/* Paragraphs and instructions */
+/* Contenu central aligné */
+#content {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    flex-grow: 1;
+}
+
+/* Texte dans le conteneur */
 p {
-    margin-bottom: 15px;
+    margin: 15px 0;
     font-size: 1.2em;
-    color: #ffffff;
 }
 
-/* Buttons and input fields */
+/* Formulaire en bas */
+form {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin-top: auto; /* Place le formulaire en bas */
+}
+
+/* Boutons et champs */
 button, input[type="text"] {
     padding: 10px 15px;
     font-size: 1em;
@@ -47,14 +67,14 @@ button, input[type="text"] {
 }
 
 button {
-    background-color: #27ae60; /* Vert vif */
+    background-color: #27ae60;
     color: white;
     cursor: pointer;
     transition: background 0.3s ease;
 }
 
 button:hover {
-    background-color: #219150; /* Légère variation au survol */
+    background-color: #219150;
 }
 
 input[type="text"] {
