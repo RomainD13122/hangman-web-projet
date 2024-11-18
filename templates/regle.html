@@ -39,6 +39,12 @@
                 Votre score sera sauvegardé et affiché sur l'écran des scores avec votre pseudo.
             </p>
         </section>
+        <p>Prêt à commencer ?</p>
+<form action="/start" method="post">
+    <input type="hidden" name="pseudo" value="{{.Pseudo}}">
+    <button type="submit">Commencer le jeu</button>
+</form>
+
     </main>
 </body>
 </html>

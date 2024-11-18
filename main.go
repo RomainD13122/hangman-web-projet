@@ -38,16 +38,28 @@ func main() {
 	http.HandleFunc("/end", endGameHandler)
 	http.HandleFunc("/scores", scoresHandler)
 	http.Handle("/static/", http.StripPrefix("/static/", http.FileServer(http.Dir("static"))))
+	http.HandleFunc("/regles", handleRegles)
 
 	fmt.Println("Server running on http://localhost:8080")
 	log.Fatal(http.ListenAndServe(":8080", nil))
 }
 
 func homeHandler(w http.ResponseWriter, r *http.Request) {
-	if gameSession != nil && gameSession.Attempts > 0 {
-		http.Redirect(w, r, "/game", http.StatusSeeOther)
+	if r.Method == http.MethodPost {
+		pseudo := r.FormValue("name") // Vérifiez que "name" correspond bien au nom du champ input
+		if pseudo == "" {
+			http.Redirect(w, r, "/", http.StatusSeeOther)
+			return
+		}
+
+		// Stocker le pseudo dans la session
+		gameSession = &GameSession{Pseudo: pseudo}
+
+		// Redirection vers la page des règles
+		http.Redirect(w, r, "/regles", http.StatusSeeOther)
 		return
 	}
+
 	tmpl, err := template.ParseFiles("templates/index.html")
 	if err != nil {
 		http.Error(w, "Erreur de chargement de la page d'accueil", http.StatusInternalServerError)
@@ -145,20 +157,16 @@ func handleIndex(w http.ResponseWriter, r *http.Request) {
 	tmpl.Execute(w, nil)
 }
 func handleRegles(w http.ResponseWriter, r *http.Request) {
-	// Vérifier que la session contient un pseudo
 	if gameSession == nil || gameSession.Pseudo == "" {
 		http.Redirect(w, r, "/", http.StatusSeeOther)
 		return
 	}
 
-	// Passer le pseudo à la page des règles
 	tmpl, err := template.ParseFiles("templates/regle.html")
 	if err != nil {
-		http.Error(w, err.Error(), http.StatusInternalServerError)
+		http.Error(w, "Erreur de chargement de la page des règles", http.StatusInternalServerError)
 		return
 	}
-
-	// Passer le pseudo à la page des règles
 	tmpl.Execute(w, gameSession)
 }
 
